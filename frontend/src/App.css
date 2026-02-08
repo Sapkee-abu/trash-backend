@@ -8,10 +8,8 @@
 }
 
 /* =========================================
-   1. DESKTOP DEFAULT (คอมพิวเตอร์ทั่วไป)
-   - ล็อคความสูง (Fixed Height)
-   - ห้ามเลื่อน (No Scroll)
-   - จัดกึ่งกลาง
+   1. DESKTOP DEFAULT (คอมพิวเตอร์)
+   - คงค่าเดิมทุกอย่าง
 ========================================= */
 body { 
   background: linear-gradient(120deg, #89f7fe 0%, #66a6ff 100%); 
@@ -36,7 +34,7 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.5); 
 }
 
-/* --- Left Panel (ส่วนรูปภาพ) --- */
+/* Left Panel */
 .left-panel { 
   flex: 1.5; 
   background-color: #1e293b; 
@@ -65,7 +63,6 @@ body {
   transition: all 0.5s ease; 
 }
 
-/* ปุ่มเล็กๆ บนรูปภาพ (Overlay) */
 .image-overlay { 
   position: absolute; 
   bottom: 20px; 
@@ -99,7 +96,6 @@ body {
 
 .upload-placeholder h3 { font-size: 2rem; margin-bottom: 20px; color: #f1f5f9; }
 
-/* ดีไซน์ปุ่มคู่ (Album vs Camera) */
 .upload-options {
   display: flex;
   justify-content: center;
@@ -136,7 +132,7 @@ body {
   margin-top: 5px;
 }
 
-/* --- Right Panel (ส่วนผลลัพธ์) --- */
+/* Right Panel */
 .right-panel { 
   flex: 1; 
   padding: 40px; 
@@ -266,8 +262,6 @@ body {
 
 /* =========================================
    2. MOBILE PHONES (มือถือ)
-   - ปรับเป็นแนวตั้ง (Column)
-   - ปลดล็อคความสูงให้เลื่อนได้
 ========================================= */
 @media (max-width: 1024px) {
   body { 
@@ -328,9 +322,8 @@ body {
 
 /* =========================================
    3. TABLET LANDSCAPE (แท็บเล็ต แนวนอน) 
-   - แก้ปัญหาจม! โดยเฉพาะ
-   - ยังคงเป็นแนวนอน (Desktop style)
-   - แต่ปลดล็อค Scroll ให้เลื่อนขึ้นลงได้
+   - แก้ปัญหาขอบไม่โค้ง -> เปลี่ยน overflow เป็น hidden
+   - แก้ปัญหาสแกนไม่เต็ม -> เอา padding ออกจาก left-panel
 ========================================= */
 @media (min-width: 1025px) and (max-width: 1366px) {
   
@@ -339,16 +332,17 @@ body {
     height: auto !important; 
     min-height: 100vh; 
     overflow-y: auto !important; 
-    padding: 40px 20px; /* เพิ่มขอบบนล่าง */
+    padding: 40px 20px;
     align-items: flex-start; 
   }
 
-  /* ปรับการ์ดให้ยืดหดได้ตามเนื้อหา ไม่ล็อคความสูง */
+  /* ปรับการ์ด */
   .glass-card { 
     width: 95vw; 
     height: auto !important; 
-    min-height: 600px; /* สูงอย่างน้อย */
-    overflow: visible !important; 
+    min-height: 600px;
+    /* แก้ไข: เปลี่ยน visible เป็น hidden เพื่อให้ขอบโค้ง */
+    overflow: hidden !important; 
     margin-bottom: 20px;
   }
 
@@ -356,10 +350,19 @@ body {
   .left-panel, .right-panel {
     height: auto !important; 
     min-height: 600px; 
-    padding: 30px;
   }
 
-  /* ปรับรูปให้พอดี ไม่ดันจนล้น */
+  /* แก้ไข: เอา padding ออก เพื่อให้รูปเต็มพื้นที่ */
+  .left-panel {
+    padding: 0 !important;
+  }
+
+  /* แก้ไข: ส่วนขวายังคงต้องการ padding */
+  .right-panel {
+    padding: 30px !important;
+  }
+
+  /* ปรับรูปให้พอดี */
   .uploaded-image {
     max-height: 500px;
   }
