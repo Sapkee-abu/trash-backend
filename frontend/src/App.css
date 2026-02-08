@@ -8,8 +8,10 @@
 }
 
 /* =========================================
-   DESKTOP DEFAULT (คอมพิวเตอร์)
-   คงค่าเดิมไว้ทุกอย่าง ล็อคความสูง ห้ามเลื่อน
+   1. DESKTOP DEFAULT (คอมพิวเตอร์ทั่วไป)
+   - ล็อคความสูง (Fixed Height)
+   - ห้ามเลื่อน (No Scroll)
+   - จัดกึ่งกลาง
 ========================================= */
 body { 
   background: linear-gradient(120deg, #89f7fe 0%, #66a6ff 100%); 
@@ -34,12 +36,11 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.5); 
 }
 
-/* Left Panel */
+/* --- Left Panel (ส่วนรูปภาพ) --- */
 .left-panel { 
   flex: 1.5; 
   background-color: #1e293b; 
   position: relative; 
-  /* ลบ cursor pointer ทั่วไปออก เพราะเรามีปุ่มแยกแล้ว */
   display: flex; 
   justify-content: center; 
   align-items: center; 
@@ -64,7 +65,7 @@ body {
   transition: all 0.5s ease; 
 }
 
-/* ปุ่มเปลี่ยนรูปเล็กๆ (Overlay) */
+/* ปุ่มเล็กๆ บนรูปภาพ (Overlay) */
 .image-overlay { 
   position: absolute; 
   bottom: 20px; 
@@ -98,7 +99,7 @@ body {
 
 .upload-placeholder h3 { font-size: 2rem; margin-bottom: 20px; color: #f1f5f9; }
 
-/* --- ดีไซน์ปุ่มคู่ (Album vs Camera) --- */
+/* ดีไซน์ปุ่มคู่ (Album vs Camera) */
 .upload-options {
   display: flex;
   justify-content: center;
@@ -135,7 +136,7 @@ body {
   margin-top: 5px;
 }
 
-/* Right Panel */
+/* --- Right Panel (ส่วนผลลัพธ์) --- */
 .right-panel { 
   flex: 1; 
   padding: 40px; 
@@ -251,7 +252,7 @@ body {
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
 /* =========================================
-   ANIMATION (คงเดิมไว้)
+   ANIMATION
 ========================================= */
 .image-wrapper.scanning .uploaded-image { filter: blur(8px) brightness(0.8); transform: scale(1.05); }
 .image-wrapper.scanning::before, .image-wrapper.scanning::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; mix-blend-mode: overlay; }
@@ -262,11 +263,13 @@ body {
 .image-wrapper.scanning { border: 2px solid rgba(59, 130, 246, 0.5); border-radius: 12px; animation: borderPulse 1.5s ease-in-out infinite alternate; }
 @keyframes borderPulse { 0% { box-shadow: inset 0 0 20px rgba(37, 99, 235, 0.2); } 100% { box-shadow: inset 0 0 60px rgba(37, 99, 235, 0.6), 0 0 20px rgba(255, 255, 255, 0.4); } }
 
+
 /* =========================================
-   MOBILE FIXES (แก้ที่ว่างขาวด้านล่าง + หดพอดี)
+   2. MOBILE PHONES (มือถือ)
+   - ปรับเป็นแนวตั้ง (Column)
+   - ปลดล็อคความสูงให้เลื่อนได้
 ========================================= */
 @media (max-width: 1024px) {
-  /* 1. ปลดล็อค Body */
   body { 
     height: auto !important; 
     min-height: 100vh; 
@@ -275,11 +278,10 @@ body {
     align-items: flex-start;
   }
 
-  /* 2. การ์ดต้อง "หด" เท่าเนื้อหาจริง ห้ามยาวเกิน */
   .glass-card { 
     flex-direction: column; 
-    height: auto !important; /* หดตามเนื้อหา */
-    min-height: 0 !important; /* ยกเลิกความสูงขั้นต่ำ */
+    height: auto !important; 
+    min-height: 0 !important; 
     width: 90vw; 
     overflow: visible !important; 
     margin: 20px 0;
@@ -291,20 +293,16 @@ body {
     border-radius: 25px 25px 0 0;
   }
 
-  /* 3. จัดการที่ว่างขาวๆ ในส่วนขวา */
   .right-panel { 
     height: auto !important; 
     min-height: 0 !important;
     padding: 20px; 
     border-radius: 0 0 25px 25px;
     flex: none;
-    
-    /* แก้จุดที่ทำให้ปุ่มลอยห่าง */
     justify-content: flex-start !important; 
     gap: 20px; 
   }
 
-  /* 4. ส่วนแสดงผล ห้ามยืดขยายจนกินที่ */
   .result-area {
     margin: 10px 0; 
     flex-grow: 0 !important; 
@@ -312,7 +310,6 @@ body {
   
   .header-text h1 { font-size: 1.8rem; }
   
-  /* 5. ปุ่มกด */
   .action-buttons {
     flex-direction: column;
     height: auto;
@@ -324,13 +321,51 @@ body {
     padding: 12px;
   }
   
-  /* ปรับปุ่มเลือกรูปในมือถือให้ชิดกันหน่อย */
-  .upload-options {
-    gap: 15px;
+  .upload-options { gap: 15px; }
+  .icon-circle { width: 70px; height: 70px; font-size: 2.5rem; }
+}
+
+
+/* =========================================
+   3. TABLET LANDSCAPE (แท็บเล็ต แนวนอน) 
+   - แก้ปัญหาจม! โดยเฉพาะ
+   - ยังคงเป็นแนวนอน (Desktop style)
+   - แต่ปลดล็อค Scroll ให้เลื่อนขึ้นลงได้
+========================================= */
+@media (min-width: 1025px) and (max-width: 1366px) {
+  
+  /* ปลดล็อค Body ให้เลื่อนได้ */
+  body { 
+    height: auto !important; 
+    min-height: 100vh; 
+    overflow-y: auto !important; 
+    padding: 40px 20px; /* เพิ่มขอบบนล่าง */
+    align-items: flex-start; 
   }
-  .icon-circle {
-    width: 70px;
-    height: 70px;
-    font-size: 2.5rem;
+
+  /* ปรับการ์ดให้ยืดหดได้ตามเนื้อหา ไม่ล็อคความสูง */
+  .glass-card { 
+    width: 95vw; 
+    height: auto !important; 
+    min-height: 600px; /* สูงอย่างน้อย */
+    overflow: visible !important; 
+    margin-bottom: 20px;
+  }
+
+  /* ข้างในให้ยืดหยุ่น */
+  .left-panel, .right-panel {
+    height: auto !important; 
+    min-height: 600px; 
+    padding: 30px;
+  }
+
+  /* ปรับรูปให้พอดี ไม่ดันจนล้น */
+  .uploaded-image {
+    max-height: 500px;
+  }
+
+  /* เผื่อที่ให้ปุ่มด้านล่าง */
+  .action-buttons {
+    margin-top: 20px;
   }
 }
