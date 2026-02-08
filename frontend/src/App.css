@@ -8,7 +8,8 @@
 }
 
 /* =========================================
-   DESKTOP DEFAULT (คอมพิวเตอร์: คงค่าเดิมไว้ทุกอย่าง)
+   DESKTOP DEFAULT (คอมพิวเตอร์)
+   คงค่าเดิมไว้ทุกอย่าง ล็อคความสูง ห้ามเลื่อน
 ========================================= */
 body { 
   background: linear-gradient(120deg, #89f7fe 0%, #66a6ff 100%); 
@@ -24,7 +25,7 @@ body {
 .glass-card { 
   background: rgba(255, 255, 255, 0.95); 
   width: 95vw; 
-  height: 90vh; /* คอมพิวเตอร์: สูง 90% ของจอ */
+  height: 90vh; 
   border-radius: 25px; 
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2); 
   display: flex; 
@@ -38,7 +39,7 @@ body {
   flex: 1.5; 
   background-color: #1e293b; 
   position: relative; 
-  cursor: pointer; 
+  /* ลบ cursor pointer ทั่วไปออก เพราะเรามีปุ่มแยกแล้ว */
   display: flex; 
   justify-content: center; 
   align-items: center; 
@@ -63,45 +64,76 @@ body {
   transition: all 0.5s ease; 
 }
 
+/* ปุ่มเปลี่ยนรูปเล็กๆ (Overlay) */
 .image-overlay { 
   position: absolute; 
   bottom: 20px; 
   right: 20px; 
-  background: rgba(0,0,0,0.6); 
-  color: white; 
-  padding: 8px 15px; 
-  border-radius: 20px; 
+  display: flex;
+  gap: 10px;
+}
+
+.overlay-btn {
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  color: white;
+  padding: 8px 15px;
+  border-radius: 20px;
   font-size: 0.9rem; 
-  pointer-events: none; 
-  opacity: 0.8; 
-  transition: opacity 0.3s; 
+  cursor: pointer;
+  backdrop-filter: blur(5px);
+  transition: all 0.3s;
+}
+.overlay-btn:hover {
+  background: rgba(0, 0, 0, 0.8);
+  transform: scale(1.05);
 }
 
 .upload-placeholder { 
   text-align: center; 
   color: #94a3b8; 
   transition: transform 0.3s; 
+  width: 100%;
 }
 
-.left-panel:hover .upload-placeholder { 
-  transform: scale(1.05); 
+.upload-placeholder h3 { font-size: 2rem; margin-bottom: 20px; color: #f1f5f9; }
+
+/* --- ดีไซน์ปุ่มคู่ (Album vs Camera) --- */
+.upload-options {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-top: 10px;
+}
+
+.option-card {
+  cursor: pointer;
+  text-align: center;
+  transition: transform 0.2s;
+}
+.option-card:hover {
+  transform: scale(1.1);
 }
 
 .icon-circle { 
-  width: 120px; 
-  height: 120px; 
+  width: 90px; 
+  height: 90px; 
   background: rgba(255, 255, 255, 0.1); 
   border-radius: 50%; 
   display: flex; 
   justify-content: center; 
   align-items: center; 
-  font-size: 4rem; 
-  margin: 0 auto 30px; 
+  font-size: 3rem; 
+  margin: 0 auto 10px; 
   backdrop-filter: blur(5px); 
+  border: 2px solid rgba(255,255,255,0.1);
 }
 
-.upload-placeholder h3 { font-size: 2rem; margin-bottom: 10px; color: #f1f5f9; }
-.upload-placeholder p { font-size: 1.2rem; color: #cbd5e1; }
+.option-card p {
+  font-size: 1.1rem;
+  color: #cbd5e1;
+  margin-top: 5px;
+}
 
 /* Right Panel */
 .right-panel { 
@@ -109,7 +141,7 @@ body {
   padding: 40px; 
   display: flex; 
   flex-direction: column; 
-  justify-content: space-between; /* คอมพิวเตอร์: ดันปุ่มไปล่างสุด */
+  justify-content: space-between; 
   background: white; 
   box-shadow: -10px 0 30px rgba(0,0,0,0.1); 
   z-index: 10; 
@@ -219,7 +251,7 @@ body {
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
 /* =========================================
-   ANIMATION (ใส่กลับมาให้ครบแล้วครับ)
+   ANIMATION (คงเดิมไว้)
 ========================================= */
 .image-wrapper.scanning .uploaded-image { filter: blur(8px) brightness(0.8); transform: scale(1.05); }
 .image-wrapper.scanning::before, .image-wrapper.scanning::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; mix-blend-mode: overlay; }
@@ -231,8 +263,7 @@ body {
 @keyframes borderPulse { 0% { box-shadow: inset 0 0 20px rgba(37, 99, 235, 0.2); } 100% { box-shadow: inset 0 0 60px rgba(37, 99, 235, 0.6), 0 0 20px rgba(255, 255, 255, 0.4); } }
 
 /* =========================================
-   MOBILE FIXES (แก้ที่ว่างขาวด้านล่าง)
-   ส่วนนี้สำคัญสุดครับ
+   MOBILE FIXES (แก้ที่ว่างขาวด้านล่าง + หดพอดี)
 ========================================= */
 @media (max-width: 1024px) {
   /* 1. ปลดล็อค Body */
@@ -247,8 +278,8 @@ body {
   /* 2. การ์ดต้อง "หด" เท่าเนื้อหาจริง ห้ามยาวเกิน */
   .glass-card { 
     flex-direction: column; 
-    height: auto !important; /* สำคัญ: หดตามเนื้อหา */
-    min-height: 0 !important; /* สำคัญ: ยกเลิกความสูงขั้นต่ำ */
+    height: auto !important; /* หดตามเนื้อหา */
+    min-height: 0 !important; /* ยกเลิกความสูงขั้นต่ำ */
     width: 90vw; 
     overflow: visible !important; 
     margin: 20px 0;
@@ -270,13 +301,13 @@ body {
     
     /* แก้จุดที่ทำให้ปุ่มลอยห่าง */
     justify-content: flex-start !important; 
-    gap: 20px; /* ใช้ gap ดันระยะห่างแทนการใช้ space-between */
+    gap: 20px; 
   }
 
   /* 4. ส่วนแสดงผล ห้ามยืดขยายจนกินที่ */
   .result-area {
     margin: 10px 0; 
-    flex-grow: 0 !important; /* ห้ามยืด */
+    flex-grow: 0 !important; 
   }
   
   .header-text h1 { font-size: 1.8rem; }
@@ -291,5 +322,15 @@ body {
   .btn-primary, .btn-secondary {
     width: 100%;
     padding: 12px;
+  }
+  
+  /* ปรับปุ่มเลือกรูปในมือถือให้ชิดกันหน่อย */
+  .upload-options {
+    gap: 15px;
+  }
+  .icon-circle {
+    width: 70px;
+    height: 70px;
+    font-size: 2.5rem;
   }
 }

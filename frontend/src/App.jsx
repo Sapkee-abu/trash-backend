@@ -8,9 +8,11 @@ function App() {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   
+  // สร้าง Ref แยก 2 อัน (อัลบั้ม vs กล้อง)
   const fileInputRef = useRef(null);
+  const cameraInputRef = useRef(null);
 
-  // 1. ฟังก์ชันเลือกไฟล์
+  // 1. ฟังก์ชันเลือกไฟล์ (ใช้ร่วมกัน)
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     if (!selectedFile) return;
@@ -21,25 +23,30 @@ function App() {
     setPreview(objectUrl);
   };
 
-  // 2. คลิกเพื่อเลือกรูป
-  const triggerFileInput = () => {
-    if (!loading) {
-      fileInputRef.current.click();
-    }
+  // 2.1 กดปุ่มอัลบั้ม
+  const triggerFileInput = (e) => {
+    e.stopPropagation();
+    if (!loading) fileInputRef.current.click();
   };
 
-  // 3. อัปโหลดและทำนายผล
+  // 2.2 กดปุ่มกล้อง (จะเปิดกล้องเลยใน Android/iOS)
+  const triggerCameraInput = (e) => {
+    e.stopPropagation();
+    if (!loading) cameraInputRef.current.click();
+  };
+
+  // 3. อัปโหลดไป Backend
   const handleUpload = async () => {
     if (!file) return;
 
-    setLoading(true); // เริ่มอนิเมชั่น
+    setLoading(true);
     setResult(null);
 
     const formData = new FormData();
     formData.append("file", file);
 
     try {
-      // หน่วงเวลา 2.5 วินาที ให้เห็นอนิเมชั่น
+      // หน่วงเวลาหลอกๆ 2.5 วิ ให้เห็นอนิเมชั่นสวยๆ
       const [apiResponse] = await Promise.all([
         axios.post("https://riost123-trash-api-backend.hf.space/predict", formData),
         new Promise(resolve => setTimeout(resolve, 2500))
@@ -48,16 +55,16 @@ function App() {
       console.log("Response:", apiResponse.data);
 
       if (apiResponse.data.error) {
-        alert("แจ้งเตือนจาก Server: " + apiResponse.data.error);
+        alert("Server Error: " + apiResponse.data.error);
       } else {
         setResult(apiResponse.data);
       }
 
     } catch (error) {
       console.error(error);
-      alert("เชื่อมต่อ Server ไม่สำเร็จ (เช็คว่ารัน FastAPI หรือยัง)");
+      alert("เชื่อมต่อ Server ไม่สำเร็จ (เช็ค Backend หรือเน็ต)");
     } finally {
-      setLoading(false); // หยุดอนิเมชั่น
+      setLoading(false);
     }
   };
 
@@ -68,7 +75,7 @@ function App() {
     setResult(null);
   };
 
-  // 4. เลือกสีจุดตามประเภทถังขยะ
+  // เลือกสีตามผลลัพธ์
   const getBinColor = (binText) => {
     if (!binText) return "#ccc";
     if (binText.includes("น้ำเงิน")) return "#0056b3";
@@ -82,36 +89,63 @@ function App() {
     <div className="main-container">
       <div className="glass-card">
         
-        {/* --- Left Panel (รูปภาพ) --- */}
-        <div className="left-panel" onClick={triggerFileInput}>
+        {/* --- Left Panel (ส่วนรูปภาพ) --- */}
+        <div className="left-panel">
+          
           {preview ? (
-            // class 'scanning' จะเรียกอนิเมชั่นใหม่
             <div className={`image-wrapper ${loading ? "scanning" : ""}`}>
               <img src={preview} alt="Upload" className="uploaded-image" />
               {!loading && (
                 <div className="image-overlay">
-                  <span>แตะเพื่อเปลี่ยนรูป</span>
+                  <button onClick={triggerFileInput} className="overlay-btn">📂 เปลี่ยนรูป</button>
+                  <button onClick={triggerCameraInput} className="overlay-btn">📸 ถ่ายใหม่</button>
                 </div>
               )}
             </div>
           ) : (
+            // หน้าจอเลือกวิธีอัปโหลด (แสดง 2 ปุ่ม)
             <div className="upload-placeholder">
-              <div className="icon-circle">📸</div>
-              <h3>เลือกรูปภาพขยะ</h3>
-              <p>คลิกบริเวณนี้เพื่ออัปโหลด</p>
+              <h3>เลือกวิธีการสแกน</h3>
+              <div className="upload-options">
+                
+                {/* ปุ่ม 1: อัลบั้ม */}
+                <div className="option-card" onClick={triggerFileInput}>
+                  <div className="icon-circle">📂</div>
+                  <p>อัลบั้ม</p>
+                </div>
+
+                {/* ปุ่ม 2: กล้อง */}
+                <div className="option-card" onClick={triggerCameraInput}>
+                  <div className="icon-circle">📸</div>
+                  <p>ถ่ายรูป</p>
+                </div>
+
+              </div>
+              <p style={{marginTop: '20px', fontSize: '0.9rem'}}>คลิกเพื่อเริ่มใช้งาน</p>
             </div>
           )}
+
+          {/* Input ซ่อน 1: อัลบั้ม */}
           <input 
             type="file" 
             ref={fileInputRef} 
             onChange={handleFileChange} 
             accept="image/*" 
-            capture="environment"
+            style={{ display: "none" }} 
+          />
+
+          {/* Input ซ่อน 2: กล้อง (capture="environment") */}
+          <input 
+            type="file" 
+            ref={cameraInputRef} 
+            onChange={handleFileChange} 
+            accept="image/*"
+            capture="environment" 
             style={{ display: "none" }} 
           />
         </div>
 
-        {/* --- Right Panel (ผลลัพธ์) --- */}
+        {/* --- Right Panel (ส่วนผลลัพธ์) --- */}
         <div className="right-panel">
           <div className="header-text">
             <h1>Trash AI ♻️</h1>
@@ -153,7 +187,7 @@ function App() {
               </div>
             ) : (
               <div className="empty-state">
-                <p>👈 เลือกรูปทางซ้าย</p>
+                <p> เลือกวิธีอัปโหลด </p>
                 <p>เพื่อเริ่มใช้งาน</p>
               </div>
             )}
