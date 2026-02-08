@@ -1,296 +1,124 @@
 @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap');
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: 'Kanit', sans-serif;
-}
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Kanit', sans-serif; }
+body { background: linear-gradient(120deg, #89f7fe 0%, #66a6ff 100%); height: 100vh; width: 100vw; display: flex; justify-content: center; align-items: center; overflow: hidden; }
 
-body {
-  background: linear-gradient(120deg, #89f7fe 0%, #66a6ff 100%);
-  height: 100vh;
-  width: 100vw;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-}
+/* Main Card */
+.glass-card { background: rgba(255, 255, 255, 0.95); width: 95vw; height: 90vh; border-radius: 25px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2); display: flex; overflow: hidden; backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.5); }
 
-/* --- Main Card (กรอบใหญ่เต็มจอ) --- */
-.glass-card {
-  background: rgba(255, 255, 255, 0.95);
-  width: 95vw;
-  height: 90vh;
-  border-radius: 25px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-  display: flex;
-  overflow: hidden; /* สำคัญ! ป้องกันรูปทะลุออกนอกมุมโค้ง */
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-}
+/* Left Panel */
+.left-panel { flex: 1.5; background-color: #1e293b; position: relative; cursor: pointer; display: flex; justify-content: center; align-items: center; padding: 0; }
+.image-wrapper { width: 100%; height: 100%; position: relative; overflow: hidden; display: flex; justify-content: center; align-items: center; }
+/* เพิ่ม transition ให้การเบลอสมูท */
+.uploaded-image { width: 100%; height: 100%; object-fit: contain; display: block; transition: all 0.5s ease; }
+.image-overlay { position: absolute; bottom: 20px; right: 20px; background: rgba(0,0,0,0.6); color: white; padding: 8px 15px; border-radius: 20px; font-size: 0.9rem; pointer-events: none; opacity: 0.8; transition: opacity 0.3s; }
+.upload-placeholder { text-align: center; color: #94a3b8; transition: transform 0.3s; }
+.left-panel:hover .upload-placeholder { transform: scale(1.05); }
+.icon-circle { width: 120px; height: 120px; background: rgba(255, 255, 255, 0.1); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 4rem; margin: 0 auto 30px; backdrop-filter: blur(5px); }
+.upload-placeholder h3 { font-size: 2rem; margin-bottom: 10px; color: #f1f5f9; }
+.upload-placeholder p { font-size: 1.2rem; color: #cbd5e1; }
 
-/* --- ฝั่งซ้าย (พื้นที่รูปภาพ) --- */
-.left-panel {
-  flex: 2.5; /* ขยายพื้นที่ฝั่งรูปให้กว้างขึ้นอีกนิด (จาก 2 เป็น 2.5) */
-  background-color: #1e293b; /* เปลี่ยนพื้นหลังเป็นสีเข้ม เพื่อให้รูปดูเด่นชัด */
-  position: relative;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 0; /* แก้ไข: ลบขอบว่างออก เพื่อให้รูปขยายได้สุดขอบ */
-}
-
-/* ส่วนแสดงผลรูปภาพ */
-.image-wrapper {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden; /* ห้ามรูปเกิน */
-}
-
-.uploaded-image {
-  width: 100%;  /* บังคับกว้างเต็ม 100% ของพื้นที่ */
-  height: 100%; /* บังคับสูงเต็ม 100% ของพื้นที่ */
-  
-  /* หัวใจสำคัญ: */
-  object-fit: contain; /* ขยายให้ใหญ่ที่สุดเท่าที่จะทำได้ โดย "ไม่ตัด" ส่วนไหนทิ้ง */
-  
-  display: block;
-}
-
-/* Overlay (ปุ่มเปลี่ยนรูป) */
-.image-overlay {
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
-  background: rgba(0,0,0,0.6);
-  color: white;
-  padding: 8px 15px;
-  border-radius: 20px;
-  font-size: 0.9rem;
-  pointer-events: none; /* คลิกทะลุได้ */
-  opacity: 0.8;
-}
-
-/* --- ส่วน Placeholder (ตอนยังไม่เลือกรูป) --- */
-.upload-placeholder {
-  text-align: center;
-  color: #94a3b8; /* ปรับสีตัวหนังสือให้เข้ากับพื้นหลังเข้ม */
-  transition: transform 0.3s;
-}
-
-.left-panel:hover .upload-placeholder {
-  transform: scale(1.05);
-}
-
-.icon-circle {
-  width: 120px;
-  height: 120px;
-  background: rgba(255, 255, 255, 0.1); /* สีวงกลมแบบโปร่งใส */
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 4rem;
-  margin: 0 auto 30px;
-  backdrop-filter: blur(5px);
-}
-
-.upload-placeholder h3 {
-  font-size: 2rem;
-  margin-bottom: 10px;
-  color: #f1f5f9; /* สีขาวนวล */
-}
-
-.upload-placeholder p {
-  font-size: 1.2rem;
-  color: #cbd5e1;
-}
-
-/* --- ฝั่งขวา (Content) --- */
-.right-panel {
-  flex: 1; /* พื้นที่ฝั่งขวา */
-  padding: 40px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  background: white;
-  box-shadow: -10px 0 30px rgba(0,0,0,0.1);
-  z-index: 10;
-}
-
-.header-text h1 {
-  font-size: 2.5rem;
-  color: #0f172a;
-}
-
-.header-text p {
-  font-size: 1.1rem;
-  color: #94a3b8;
-}
-
-/* Result Area */
-.result-area {
-  flex-grow: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 10px;
-}
-
-.empty-state p { font-size: 1.2rem; color: #cbd5e1; }
+/* Right Panel */
+.right-panel { flex: 1; padding: 40px; display: flex; flex-direction: column; justify-content: space-between; background: white; box-shadow: -10px 0 30px rgba(0,0,0,0.1); z-index: 10; }
+.header-text h1 { font-size: 2.5rem; color: #0f172a; }
+.header-text p { font-size: 1.1rem; color: #94a3b8; }
+.result-area { flex-grow: 1; display: flex; justify-content: center; align-items: center; padding: 10px; }
+.empty-state p { font-size: 1.2rem; color: #cbd5e1; text-align: center; }
+.loading-state { text-align: center; color: #3b82f6; }
 
 /* Result Card */
-.result-card {
-  width: 100%;
-  background: #f8fafc;
-  padding: 25px;
-  border-radius: 20px;
-  text-align: center;
-  border: 1px solid #e2e8f0;
-}
-
-.prediction-badge {
-  display: inline-block;
-  background: #2563eb;
-  color: white;
-  padding: 8px 30px;
-  border-radius: 50px;
-  font-size: 1.8rem;
-  font-weight: bold;
-  margin-bottom: 20px;
-  box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3);
-}
-
-.stat-row {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 12px;
-  font-size: 1.1rem;
-  color: #334155;
-  border-bottom: 1px solid #e2e8f0;
-  padding-bottom: 8px;
-}
-
-.advice-box {
-  margin-top: 20px;
-  background: #eff6ff;
-  padding: 15px;
-  border-radius: 12px;
-  text-align: left;
-  border-left: 4px solid #2563eb;
-}
-
-.advice-box small {
-  font-size: 0.9rem;
-  color: #60a5fa;
-  font-weight: bold;
-}
-
-.advice-box p {
-  font-size: 1.1rem;
-  color: #1e40af;
-  margin-top: 5px;
-}
+.result-card { width: 100%; background: #f8fafc; padding: 25px; border-radius: 20px; text-align: center; border: 1px solid #e2e8f0; }
+.prediction-badge { display: inline-block; background: #2563eb; color: white; padding: 8px 30px; border-radius: 50px; font-size: 1.8rem; font-weight: bold; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3); text-transform: capitalize; }
+.stat-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 1.1rem; color: #334155; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; }
+.bin-container { display: flex; align-items: center; gap: 10px; }
+.bin-color-dot { width: 20px; height: 20px; border-radius: 50%; display: inline-block; box-shadow: 0 2px 5px rgba(0,0,0,0.2); border: 2px solid white; }
+.advice-box { margin-top: 20px; background: #eff6ff; padding: 15px; border-radius: 12px; text-align: left; border-left: 4px solid #2563eb; }
+.advice-box small { font-size: 0.9rem; color: #60a5fa; font-weight: bold; }
+.advice-box p { font-size: 1.1rem; color: #1e40af; margin-top: 5px; }
 
 /* Buttons */
-.action-buttons {
-  display: flex;
-  gap: 15px;
-  height: 60px;
-}
-
-.btn-primary {
-  flex: 2;
-  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-  color: white;
-  border: none;
-  border-radius: 15px;
-  font-size: 1.2rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3);
-}
-
-.btn-primary:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(37, 99, 235, 0.4);
-}
-
-.btn-primary:disabled {
-  background: #94a3b8;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.btn-secondary {
-  flex: 1;
-  background: #fee2e2;
-  color: #ef4444;
-  border: none;
-  border-radius: 15px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.btn-secondary:hover {
-  background: #fecaca;
-}
-
-/* Spinner & Animations */
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid #e2e8f0;
-  border-top: 4px solid #2563eb;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin: 0 auto 10px;
-}
+.action-buttons { display: flex; gap: 15px; height: 60px; }
+.btn-primary { flex: 2; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: white; border: none; border-radius: 15px; font-size: 1.2rem; font-weight: 600; cursor: pointer; transition: all 0.2s; box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3); }
+.btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(37, 99, 235, 0.4); }
+.btn-primary:disabled { background: #94a3b8; cursor: not-allowed; transform: none; }
+.btn-secondary { flex: 1; background: #fee2e2; color: #ef4444; border: none; border-radius: 15px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+.btn-secondary:hover { background: #fecaca; }
+.spinner { width: 40px; height: 40px; border: 4px solid #e2e8f0; border-top: 4px solid #3b82f6; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 10px; }
 @keyframes spin { 100% { transform: rotate(360deg); } }
 .fade-in { animation: fadeIn 0.5s ease; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-/* Mobile */
+/* =========================================
+   ANIMATION: Constant Blur + Random Popping Dots
+   ภาพเบลอค้างไว้ + จุดโผล่สุ่มๆ
+========================================= */
+
+/* 1. สั่งให้รูปภาพเบลอค้างไว้เลยตอนสแกน */
+.image-wrapper.scanning .uploaded-image {
+  filter: blur(8px) brightness(0.8); /* เบลอและมืดลงนิดหน่อยให้จุดเด่นขึ้น */
+  transform: scale(1.05); /* ซูมนิดหน่อยเพิ่มมิติ */
+}
+
+/* 2. สร้าง Layer จุด 2 ชั้น (before=ขาว, after=ฟ้า) เพื่อให้ดูสุ่ม */
+.image-wrapper.scanning::before,
+.image-wrapper.scanning::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 5;
+  mix-blend-mode: overlay; /* ให้จุดดูเรืองแสง */
+}
+
+/* Layer 1: จุดสีขาวเล็กๆ */
+.image-wrapper.scanning::before {
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.8) 1.5px, transparent 2px);
+  background-size: 30px 30px; /* ระยะห่าง */
+  background-position: 0 0;
+  /* เล่นอนิเมชั่น A */
+  animation: randomPopA 3s infinite linear;
+}
+
+/* Layer 2: จุดสีฟ้าใหญ่กว่านิดหน่อย */
+.image-wrapper.scanning::after {
+  background-image: radial-gradient(circle, rgba(100, 200, 255, 0.7) 2px, transparent 2.5px);
+  background-size: 45px 45px; /* ระยะห่างต่างกัน */
+  background-position: 15px 15px; /* ตำแหน่งเริ่มต้นต่างกัน */
+  /* เล่นอนิเมชั่น B (ช้ากว่าและเริ่มทีหลัง) */
+  animation: randomPopB 4s infinite linear reverse;
+  animation-delay: 0.5s;
+}
+
+/* คีย์เฟรม A: กระพริบและขยับตำแหน่ง */
+@keyframes randomPopA {
+  0%   { opacity: 0; background-position: 0 0; }
+  20%  { opacity: 0.8; }
+  50%  { opacity: 0.2; background-position: 20px -20px; } /* ขยับตอนจาง */
+  80%  { opacity: 1; }
+  100% { opacity: 0; background-position: 40px 0; }
+}
+
+/* คีย์เฟรม B: กระพริบและขยับตำแหน่ง (จังหวะต่างจาก A) */
+@keyframes randomPopB {
+  0%   { opacity: 0; background-position: 15px 15px; }
+  30%  { opacity: 1; }
+  60%  { opacity: 0.3; background-position: -10px 30px; } /* ขยับตอนจาง */
+  90%  { opacity: 0.9; }
+  100% { opacity: 0; background-position: 15px 50px; }
+}
+
+/* กรอบเรืองแสงขณะสแกน */
+.image-wrapper.scanning {
+  border: 2px solid rgba(59, 130, 246, 0.5); 
+  border-radius: 12px;
+  animation: borderPulse 1.5s ease-in-out infinite alternate;
+}
+@keyframes borderPulse {
+  0% { box-shadow: inset 0 0 20px rgba(37, 99, 235, 0.2); }
+  100% { box-shadow: inset 0 0 60px rgba(37, 99, 235, 0.6), 0 0 20px rgba(255, 255, 255, 0.4); }
+}
+
+/* Mobile Responsive */
 @media (max-width: 1024px) {
   .glass-card { flex-direction: column; height: auto; width: 95vw; overflow-y: auto; }
   .left-panel { height: 400px; flex: none; }
-}
-  /* --- ฝั่งซ้าย (พื้นที่รูปภาพ) --- */
-.left-panel {
-  /* เดิมผมตั้งไว้ 2.5 (กว้างมาก) ให้แก้ลดลงเหลือประมาณ 1.5 หรือ 1.2 ครับ */
-  flex: 1.5; 
-  
-  /* ...ค่าอื่นๆ เหมือนเดิม... */
-  background-color: #1e293b;
-  position: relative;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 0;
-}
-
-/* ... */
-
-/* --- ฝั่งขวา (Content สีขาว) --- */
-.right-panel {
-  /* เดิมเป็น 1 ให้คงไว้ หรือถ้าอยากให้กว้างมากๆ ให้เพิ่มเป็น 1.2 */
-  flex: 1; 
-
-  /* ...ค่าอื่นๆ เหมือนเดิม... */
-  padding: 40px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  background: white;
-  box-shadow: -10px 0 30px rgba(0,0,0,0.1);
-  z-index: 10;
 }
