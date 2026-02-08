@@ -8,27 +8,27 @@
 }
 
 /* =========================================
-   DESKTOP DEFAULT (คอมพิวเตอร์เหมือนเดิมเป๊ะ)
+   DESKTOP DEFAULT (คอมพิวเตอร์: คงค่าเดิมไว้ทุกอย่าง)
 ========================================= */
 body { 
   background: linear-gradient(120deg, #89f7fe 0%, #66a6ff 100%); 
-  height: 100vh; /* ล็อคเต็มจอ */
+  height: 100vh; 
   width: 100vw; 
   display: flex; 
   justify-content: center; 
   align-items: center; 
-  overflow: hidden; /* ห้ามเลื่อน */
+  overflow: hidden; 
 }
 
 /* Main Card */
 .glass-card { 
   background: rgba(255, 255, 255, 0.95); 
   width: 95vw; 
-  height: 90vh; /* ความสูงคงที่ */
+  height: 90vh; /* คอมพิวเตอร์: สูง 90% ของจอ */
   border-radius: 25px; 
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2); 
   display: flex; 
-  overflow: hidden; /* ซ่อนส่วนเกิน */
+  overflow: hidden; 
   backdrop-filter: blur(20px); 
   border: 1px solid rgba(255, 255, 255, 0.5); 
 }
@@ -109,7 +109,7 @@ body {
   padding: 40px; 
   display: flex; 
   flex-direction: column; 
-  justify-content: space-between; 
+  justify-content: space-between; /* คอมพิวเตอร์: ดันปุ่มไปล่างสุด */
   background: white; 
   box-shadow: -10px 0 30px rgba(0,0,0,0.1); 
   z-index: 10; 
@@ -219,7 +219,7 @@ body {
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
 /* =========================================
-   ANIMATION (คงเดิม)
+   ANIMATION (ใส่กลับมาให้ครบแล้วครับ)
 ========================================= */
 .image-wrapper.scanning .uploaded-image { filter: blur(8px) brightness(0.8); transform: scale(1.05); }
 .image-wrapper.scanning::before, .image-wrapper.scanning::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; mix-blend-mode: overlay; }
@@ -231,51 +231,63 @@ body {
 @keyframes borderPulse { 0% { box-shadow: inset 0 0 20px rgba(37, 99, 235, 0.2); } 100% { box-shadow: inset 0 0 60px rgba(37, 99, 235, 0.6), 0 0 20px rgba(255, 255, 255, 0.4); } }
 
 /* =========================================
-   MOBILE FIXES (แก้เฉพาะมือถือ)
-   ใช้ !important เพื่อบังคับให้ทับค่าของคอมพิวเตอร์
+   MOBILE FIXES (แก้ที่ว่างขาวด้านล่าง)
+   ส่วนนี้สำคัญสุดครับ
 ========================================= */
 @media (max-width: 1024px) {
-  /* 1. ปลดล็อค Body ให้เลื่อนหน้าจอได้ */
+  /* 1. ปลดล็อค Body */
   body { 
     height: auto !important; 
     min-height: 100vh; 
-    overflow-y: auto !important; /* ยอมให้ scroll ได้ */
-    padding: 20px 0; /* เพิ่มระยะขอบบน-ล่าง */
-    align-items: flex-start; /* เริ่มเนื้อหาจากด้านบน ไม่ใช่กึ่งกลาง */
+    overflow-y: auto !important; 
+    padding: 20px 0;
+    align-items: flex-start;
   }
 
-  /* 2. ปรับ Card ให้ยืดหดตามเนื้อหา */
+  /* 2. การ์ดต้อง "หด" เท่าเนื้อหาจริง ห้ามยาวเกิน */
   .glass-card { 
-    flex-direction: column; /* เรียงแนวตั้ง */
-    height: auto !important; /* ยกเลิกความสูง 90vh */
-    min-height: 80vh;
-    width: 90vw; /* ให้กว้างเกือบเต็มจอ */
-    overflow: visible !important; /* ให้เนื้อหาล้นออกมาได้ถ้ายาว */
+    flex-direction: column; 
+    height: auto !important; /* สำคัญ: หดตามเนื้อหา */
+    min-height: 0 !important; /* สำคัญ: ยกเลิกความสูงขั้นต่ำ */
+    width: 90vw; 
+    overflow: visible !important; 
     margin: 20px 0;
   }
 
-  /* 3. ปรับขนาดรูปภาพในมือถือ */
   .left-panel { 
     height: 350px; 
     flex: none; 
     border-radius: 25px 25px 0 0;
   }
 
-  /* 4. ปรับส่วนเนื้อหาด้านล่าง */
+  /* 3. จัดการที่ว่างขาวๆ ในส่วนขวา */
   .right-panel { 
-    height: auto; 
+    height: auto !important; 
+    min-height: 0 !important;
     padding: 20px; 
     border-radius: 0 0 25px 25px;
-    flex: none; 
+    flex: none;
+    
+    /* แก้จุดที่ทำให้ปุ่มลอยห่าง */
+    justify-content: flex-start !important; 
+    gap: 20px; /* ใช้ gap ดันระยะห่างแทนการใช้ space-between */
+  }
+
+  /* 4. ส่วนแสดงผล ห้ามยืดขยายจนกินที่ */
+  .result-area {
+    margin: 10px 0; 
+    flex-grow: 0 !important; /* ห้ามยืด */
   }
   
   .header-text h1 { font-size: 1.8rem; }
   
-  /* 5. ปรับปุ่มกดให้เต็มจอ กดง่าย */
+  /* 5. ปุ่มกด */
   .action-buttons {
     flex-direction: column;
     height: auto;
+    margin-top: 10px;
   }
+
   .btn-primary, .btn-secondary {
     width: 100%;
     padding: 12px;
