@@ -7,9 +7,7 @@ import io
 
 app = FastAPI()
 
-# ==========================
-# 1. เปิด CORS
-# ==========================
+# เปิด CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -18,86 +16,79 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ==========================
-# 2. โหลดโมเดล
-# ==========================================
 print("Loading model...")
-# ตรวจสอบว่ามีไฟล์ trash_classifier.keras อยู่ในโฟลเดอร์เดียวกัน
 model = tf.keras.models.load_model("trash_classifier.keras")
 print("Model loaded!")
 
-# ==========================
-# 3. ชื่อคลาส (6 ประเภท)
-# ==========================================
 class_names = ["cardboard", "glass", "metal", "paper", "plastic", "trash"]
 
-# ==========================
-# 4. ข้อมูลคำแนะนำ
-# ==========================================
+# --- 1. แก้ไขคำแนะนำให้เหมาะสมขึ้น ---
 trash_info = {
     "cardboard": {
-        "bin": "ถังสีน้ำเงิน (รีไซเคิล)",
-        "advice": "พับกล่องให้แบน หลีกเลี่ยงความชื้น"
+        "bin": "ถังรีไซเคิล (กระดาษ/ลัง)",
+        "advice": "พับให้แบนเพื่อประหยัดพื้นที่"
     },
     "glass": {
-        "bin": "ถังสีเขียว (แก้ว)",
-        "advice": "ระวังแตก แยกฝาขวดออกก่อนทิ้ง"
+        "bin": "ถังขยะแก้ว (สีเขียว)",
+        "advice": "ระวังแตก! แยกฝาขวดพลาสติกออกก่อนทิ้ง"
     },
     "metal": {
-        "bin": "ถังสีเหลือง (รีไซเคิล)",
-        "advice": "เทน้ำออกให้หมด และล้างให้สะอาด"
+        "bin": "ถังรีไซเคิล (โลหะ/อลูมิเนียม)",
+        "advice": "เทน้ำออกให้หมด บีบกระป๋องถ้าทำได้"
     },
     "paper": {
-        "bin": "ถังสีน้ำเงิน (กระดาษ)",
-        "advice": "ต้องแห้งสนิท ห้ามเปื้อนน้ำมันหรือเศษอาหาร"
+        "bin": "ถังรีไซเคิล (กระดาษ)",
+        "advice": "ต้องแห้งสนิท ไม่เปื้อนน้ำมันหรือเศษอาหาร"
     },
     "plastic": {
-        "bin": "ถังสีเหลือง (พลาสติก)",
-        "advice": "บีบให้แบนเพื่อประหยัดพื้นที่ และล้างสะอาด"
+        "bin": "ถังรีไซเคิล (พลาสติก)",
+        "advice": "เทของเหลวออกให้หมด แยกฉลาก/ฝา ถ้าแยกได้"  # แก้จากบีบ เป็นเน้นความสะอาด
     },
     "trash": {
-        "bin": "ถังสีแดง หรือ สีส้ม (ขยะทั่วไป/อันตราย)",
-        "advice": "ขยะปนเปื้อน หรือขยะที่ไม่สามารถรีไซเคิลได้"
+        "bin": "ถังขยะทั่วไป (สีแดง/ส้ม)",
+        "advice": "ขยะเปื้อน ขยะกำพร้า หรือที่ไม่สามารถรีไซเคิลได้"
     }
 }
-
-@app.get("/")
-def health():
-    return {"status": "API is running"}
 
 @app.post("/predict")
 async def predict(file: UploadFile = File(...)):
     try:
-        # อ่านไฟล์รูปภาพ
         contents = await file.read()
         image = Image.open(io.BytesIO(contents)).convert("RGB")
         
-        # ปรับขนาดภาพให้เข้ากับโมเดล (224x224)
+        # Resize
         image = image.resize((224, 224))
-
-        # --- จุดแก้ไขสำคัญ (ไม่ต้องหาร 255.0) ---
-        # แปลงเป็น Array (ค่าจะเป็น 0-255) ส่งไปให้โมเดลได้เลย
-        # เพราะโมเดลเราใส่ Layer Preprocess ไว้ข้างในแล้ว
         img_array = np.array(image)
-        
-        # ขยายมิติให้เป็น batch (1, 224, 224, 3)
         img_array = np.expand_dims(img_array, axis=0)
 
-        # ทำนายผล
-        prediction = model.predict(img_array)[0]
+        # --- 2. จุดเช็ค Preprocessing (สำคัญมาก) ---
+        # ถ้าผลลัพธ์มั่วมาก ให้ลองเปิดบรรทัดข้างล่างนี้ (หาร 255) แล้วรันใหม่
+        # img_array = img_array / 255.0  
 
-        # หาค่าที่มั่นใจที่สุด (Index)
+        prediction = model.predict(img_array)[0]
         class_index = int(np.argmax(prediction))
-        
-        # ป้องกัน Error ถ้า Index เกิน
+        confidence = float(prediction[class_index]) * 100  # แปลงเป็น %
+
+        print(f"Pred: {class_names[class_index]} ({confidence:.2f}%)") # Log ดูหลังบ้าน
+
+        # --- 3. ระบบกันหน้าแตก (Threshold) ---
+        # ถ้าความมั่นใจต่ำกว่า 60% ให้ตอบว่าไม่แน่ใจ
+        if confidence < 60.0:
+            return {
+                "prediction": "Unknown",
+                "confidence": round(confidence, 2),
+                "bin": "ไม่แน่ใจ / ขยะทั่วไป",
+                "advice": "ภาพไม่ชัด หรือเป็นขยะที่ไม่รู้จัก ลองถ่ายใหม่ หรือทิ้งถังทั่วไป",
+                "top3": []
+            }
+
+        # ถ้า Index เกิน
         if class_index >= len(class_names):
             class_name = "trash"
         else:
             class_name = class_names[class_index]
-            
-        confidence = float(prediction[class_index])
 
-        # สร้างรายการผลทำนาย Top 3
+        # สร้าง Top 3
         all_predictions = []
         for i, prob in enumerate(prediction):
             if i < len(class_names):
@@ -105,17 +96,15 @@ async def predict(file: UploadFile = File(...)):
                     "class": class_names[i],
                     "confidence": round(float(prob * 100), 2)
                 })
-
-        # เรียงลำดับความมั่นใจ
+        
         top3 = sorted(all_predictions, key=lambda x: x["confidence"], reverse=True)[:3]
 
         return {
             "prediction": class_name,
-            "confidence": round(confidence * 100, 2),
+            "confidence": round(confidence, 2),
             "bin": trash_info.get(class_name, {}).get("bin", "ไม่ระบุ"),
             "advice": trash_info.get(class_name, {}).get("advice", "-"),
-            "top3": top3,
-            "all_predictions": all_predictions
+            "top3": top3
         }
 
     except Exception as e:
