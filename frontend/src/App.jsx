@@ -25,7 +25,7 @@ useEffect(() => {
 
     const batch = [];
 
-    for (let i = 0; i < 25; i++) { // ถ้าในทรศกระตุกให้ประเป็น 
+    for (let i = 0; i < 25; i++) {
 
       const size =
         wrapperWidth * 0.0008 +   // ขนาดพื้นฐานตามรูป
