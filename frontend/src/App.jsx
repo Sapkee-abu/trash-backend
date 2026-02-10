@@ -48,7 +48,7 @@ useEffect(() => {
       }, dot.duration);
     });
 
-  }, 16); // 60fps
+  }, 5); // 60fps
 
   return () => clearInterval(interval);
 
