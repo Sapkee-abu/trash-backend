@@ -1,12 +1,60 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+
 import axios from "axios";
 import "./App.css";
+
 
 function App() {
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [dots, setDots] = useState([]);
+  const wrapperRef = useRef(null);
+
+
+useEffect(() => {
+  if (!loading) {
+    setDots([]);
+    return;
+  }
+
+  const interval = setInterval(() => {
+
+    const wrapperWidth = wrapperRef.current?.offsetWidth || 1000;
+
+    const batch = [];
+
+    for (let i = 0; i < 25; i++) { // ถ้าในทรศกระตุกให้ประเป็น 
+
+      const size =
+        wrapperWidth * 0.0008 +   // ขนาดพื้นฐานตามรูป
+        Math.random() * wrapperWidth * 0.0008;
+
+      batch.push({
+        id: Math.random(),
+        top: Math.random() * 100,
+        left: Math.random() * 100,
+        size,
+        duration: 2000 + Math.random() * 2000
+      });
+    }
+
+    setDots(prev => [...prev, ...batch]);
+
+    batch.forEach(dot => {
+      setTimeout(() => {
+        setDots(prev => prev.filter(d => d.id !== dot.id));
+      }, dot.duration);
+    });
+
+  }, 16); // 60fps
+
+  return () => clearInterval(interval);
+
+}, [loading]);
+
+
   
   // สร้าง Ref แยก 2 อัน (อัลบั้ม vs กล้อง)
   const fileInputRef = useRef(null);
@@ -93,15 +141,38 @@ function App() {
         <div className="left-panel">
           
           {preview ? (
-            <div className={`image-wrapper ${loading ? "scanning" : ""}`}>
-              <img src={preview} alt="Upload" className="uploaded-image" />
-              {!loading && (
-                <div className="image-overlay">
-                  <button onClick={triggerFileInput} className="overlay-btn">📂 เปลี่ยนรูป</button>
-                  <button onClick={triggerCameraInput} className="overlay-btn">📸 ถ่ายใหม่</button>
-                </div>
-              )}
-            </div>
+            <div
+  ref={wrapperRef}
+  className={`image-wrapper ${loading ? "scanning" : ""}`}
+>
+  <img src={preview} alt="Upload" className="uploaded-image" />
+
+  {loading && (
+    <div className="dot-layer">
+      {dots.map(dot => (
+        <span
+          key={dot.id}
+          className="magic-dot"
+          style={{
+            top: `${dot.top}%`,
+            left: `${dot.left}%`,
+            width: `${dot.size}px`,
+            height: `${dot.size}px`,
+            animationDuration: `${dot.duration}ms`
+          }}
+        />
+      ))}
+    </div>
+  )}
+
+  {!loading && (
+    <div className="image-overlay">
+      <button onClick={triggerFileInput} className="overlay-btn">📂 เปลี่ยนรูป</button>
+      <button onClick={triggerCameraInput} className="overlay-btn">📸 ถ่ายใหม่</button>
+    </div>
+  )}
+</div>
+
           ) : (
             // หน้าจอเลือกวิธีอัปโหลด (แสดง 2 ปุ่ม)
             <div className="upload-placeholder">
