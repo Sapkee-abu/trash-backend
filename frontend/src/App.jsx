@@ -168,7 +168,7 @@ function App() {
               <p>ระบบแยกขยะอัจฉริยะ</p>
             </div>
             <div className="top-icons">
-               <button className="icon-btn guide-btn" onClick={() => setShowGuide(true)} title="คู่มือการแยกขยะ">
+               <button className="icon-btn guide-btn" onClick={() => setShowGuide(true)} title="คู่มือการแยกขยะ ">
                  📖
                </button>
                <button className="icon-btn info-btn" onClick={() => setShowCredits(true)} title="ผู้จัดทำ">
@@ -202,7 +202,9 @@ function App() {
                 <div className="advice-box">
                   <small>คำแนะนำ:</small>
                   <p>{result.advice}</p>
+                  <p>EfficientNet-B3 Model</p>
                 </div>
+                
               </div>
             ) : (
               <div className="empty-state">
@@ -227,6 +229,7 @@ function App() {
               </button>
             )}
           </div>
+          <p className="model-tag">🚀 AI Model: EfficientNet-B3</p>
         </div>
       </div>
 
@@ -261,7 +264,7 @@ function App() {
         <div className="modal-overlay" onClick={() => setShowGuide(false)}>
           <div className="modal-content guide-modal" onClick={e => e.stopPropagation()}>
              <div className="modal-header">
-              <h3>📖 คู่มือการแยกขยะ</h3>
+              <h3>📖 คู่มือการแยกขยะ </h3>
               <button className="close-btn" onClick={() => setShowGuide(false)}>×</button>
             </div>
             <div className="guide-grid">
