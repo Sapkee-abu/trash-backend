@@ -202,7 +202,6 @@ function App() {
                 <div className="advice-box">
                   <small>คำแนะนำ:</small>
                   <p>{result.advice}</p>
-                  <p>EfficientNet-B3 Model</p>
                 </div>
                 
               </div>
