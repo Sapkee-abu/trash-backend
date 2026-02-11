@@ -20,7 +20,7 @@
 
 /* --- Background --- */
 body { 
-  height: 100vh; 
+  min-height: 100vh; /* ใช้ min-height แทน height */
   width: 100vw; 
   display: flex; 
   justify-content: center; 
@@ -28,9 +28,11 @@ body {
   background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
   background-size: 400% 400%;
   animation: gradientBG 15s ease infinite; 
-  /* ล็อคพื้นหลังให้อยู่กับที่ แก้ปัญหาเลื่อนแล้วหลุดในมือถือ */
-  position: fixed; 
-  overflow: hidden; 
+  
+  /* 🔥 แก้ไข: ปลดล็อคเพื่อให้ Pull-to-Refresh ทำงานได้ */
+  position: static; 
+  overflow-y: auto; 
+  overscroll-behavior-y: auto;
 }
 
 @keyframes gradientBG {
@@ -270,73 +272,80 @@ body {
 .blue { background: #e3f2fd; border: 2px solid #90caf9; } .blue h4 { color: #1e88e5; }
 
 /* =========================================
-   🔥 MOBILE & TABLET RESPONSIVE (แก้ไขแล้ว) 🔥
+   🔥 MOBILE & TABLET RESPONSIVE 🔥
 ========================================= */
 @media (max-width: 1024px) {
-  /* ล็อค Body ไม่ให้พื้นหลังขยับ แต่ให้เนื้อหาข้างในเลื่อนได้ */
+  /* 🔥 1. ปลดล็อค Body ให้เลื่อนได้ (เพื่อให้ Pull-to-Refresh ทำงาน) */
   body { 
-    height: 100%; width: 100%; position: fixed; overflow: hidden; padding: 0; align-items: flex-start; 
+    height: auto; 
+    min-height: 100vh;
+    width: 100%; 
+    position: static; 
+    overflow-y: auto; 
+    padding: 0; 
+    align-items: flex-start; 
   }
 
-  /* การ์ดเต็มจอ */
+  /* การ์ดในมือถือ (ให้ Body เป็นตัวเลื่อนแทน) */
   .glass-card { 
     flex-direction: column; 
-    height: 100dvh !important; /* เต็มจอจริงๆ รวม address bar */
+    height: auto !important; /* ให้สูงตามเนื้อหา */
+    min-height: 100vh;
     width: 100vw; 
     border-radius: 0; 
-    overflow-y: auto; 
+    overflow: visible; /* ห้ามมี Scrollbar ของตัวเอง ให้ใช้ของ Body */
     margin: 0;
-    -webkit-overflow-scrolling: touch;
   }
 
-  /* 🔥 1. จัดพื้นที่รูปภาพใหม่ (ให้รูปอยู่กลาง สวยงาม) */
+  /* 2. ส่วนรูปภาพ (50% ของจอ) */
   .left-panel { 
-    height: 45vh; /* ความสูง 45% ของจอ */
-    min-height: 350px; /* กันรูปเล็กเกินไปในจอสั้น */
+    height: 50vh; 
+    min-height: 350px; 
     width: 100%;
     flex: none; 
-    border-radius: 0; /* พื้นหลังเทาเต็มขอบ */
+    border-radius: 0; 
     background-color: #f1f2f6; 
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
-    z-index: 1; /* อยู่ชั้นล่าง */
+    z-index: 1;
   }
 
   .uploaded-image {
-    padding: 0; /* เอาระยะห่างออกเพื่อให้รูปขยายได้เต็มที่ */
+    padding: 0; 
     max-width: 90%; 
-    max-height: 80%; /* เหลือที่ข้างล่างไว้ให้ปุ่ม overlay หน่อย */
+    max-height: 80%; 
     object-fit: contain;
   }
   
-  /* 🔥 2. ปุ่ม Overlay (เปลี่ยนรูป/ถ่ายใหม่) ลอยเหนือกล่องขาว */
+  /* ปุ่ม Overlay */
   .image-overlay {
-    bottom: 40px; /* ดันขึ้นมา 40px เพื่อหนีจากกล่องขาวที่จะทับ */
+    bottom: 40px; 
     left: 50%;
-    transform: translateX(-50%); /* จัดกึ่งกลางแนวนอน */
+    transform: translateX(-50%); 
     right: auto;
     width: max-content;
-    z-index: 20; /* 🔥 สำคัญ: ลอยเหนือ Right Panel */
+    z-index: 20; 
     gap: 15px;
   }
 
   .overlay-btn {
-    background: white; /* พื้นขาวให้เด่นบนรูป */
+    background: white; 
     box-shadow: 0 4px 15px rgba(0,0,0,0.15);
     color: #2d3436;
     border: 1px solid rgba(0,0,0,0.05);
   }
 
-  /* 🔥 3. ส่วนเนื้อหา (กล่องขาว) */
+  /* 3. ส่วนเนื้อหา (Right Panel) */
   .right-panel { 
-    flex: 1; /* กินพื้นที่ที่เหลือทั้งหมด */
+    flex: 1; 
     width: 100%;
     background: white;
-    border-radius: 30px 30px 0 0; /* ขอบมนด้านบน */
-    margin-top: -25px; /* ดึงขึ้นมาทับรูปนิดนึงให้ดูเชื่อมกัน */
-    padding: 30px 25px 120px 25px; /* 🔥 Padding ล่างเยอะๆ กันปุ่มทำนายผลจม */
+    border-radius: 30px 30px 0 0; 
+    margin-top: -25px; 
+    /* ✅ Padding ล่างพอดีๆ ไม่เยอะเกินไป */
+    padding: 30px 25px 40px 25px; 
     z-index: 10; 
     box-shadow: 0 -10px 30px rgba(0,0,0,0.05);
     display: flex;
@@ -344,18 +353,17 @@ body {
     gap: 15px;
   }
 
-  /* ปรับขนาดส่วนอื่นๆ */
   .result-area { margin: 10px 0; flex-grow: 0 !important; }
   .header-text h1 { font-size: 2.2rem; }
   
-  /* ปุ่มทำนายผล (Action Buttons) */
+  /* 🔥 4. ปุ่ม Action เรียงแนวนอน (ข้างๆ กัน) */
   .action-buttons { 
-    flex-direction: column; 
-    height: auto; 
+    flex-direction: row; 
+    height: 60px; 
     margin-top: 20px;
-    /* ไม่ต้อง fix position ให้มันไหลไปตามเนื้อหา */
+    gap: 15px;
   }
-  .btn-primary, .btn-secondary { width: 100%; padding: 15px; }
+  .btn-primary, .btn-secondary { width: auto; padding: 0; }
   
   .upload-options { gap: 20px; }
   .icon-circle { width: 70px; height: 70px; font-size: 2rem; }
