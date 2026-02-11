@@ -1,4 +1,14 @@
-@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&display=swap');
+
+:root {
+  --primary-gradient: linear-gradient(135deg, #00b09b 0%, #96c93d 100%); /* เขียว Eco สดใส */
+  --secondary-gradient: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.6);
+  --text-main: #2d3436;
+  --text-sub: #636e72;
+  --shadow-card: 0 20px 50px rgba(0, 0, 0, 0.15);
+}
 
 * { 
   box-sizing: border-box; 
@@ -7,42 +17,49 @@
   font-family: 'Kanit', sans-serif; 
 }
 
-/* =========================================
-   1. DESKTOP DEFAULT (คอมพิวเตอร์)
-   - คงค่าเดิมทุกอย่าง
-========================================= */
+/* --- Background เคลื่อนไหวได้แบบพรีเมียม --- */
 body { 
-  background: linear-gradient(120deg, #89f7fe 0%, #66a6ff 100%); 
   height: 100vh; 
   width: 100vw; 
   display: flex; 
   justify-content: center; 
   align-items: center; 
-  overflow: hidden; 
+  overflow: hidden;
+  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+  background-size: 400% 400%;
+  animation: gradientBG 15s ease infinite; /* พื้นหลังขยับนุ่มๆ */
 }
 
-/* Main Card */
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* --- Glass Card (กรอบหลัก) --- */
 .glass-card { 
-  background: rgba(255, 255, 255, 0.95); 
-  width: 95vw; 
-  height: 90vh; 
-  border-radius: 25px; 
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2); 
+  background: var(--glass-bg); 
+  width: 90vw; 
+  max-width: 1200px;
+  height: 85vh; 
+  border-radius: 30px; 
+  box-shadow: var(--shadow-card); 
   display: flex; 
   overflow: hidden; 
   backdrop-filter: blur(20px); 
-  border: 1px solid rgba(255, 255, 255, 0.5); 
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border); 
 }
 
-/* Left Panel */
+/* --- Left Panel (ส่วนรูปภาพ) --- */
 .left-panel { 
-  flex: 1.5; 
-  background-color: #1e293b; 
+  flex: 1.2; 
+  background-color: #f1f2f6; /* พื้นเทาอ่อนๆ ให้รูปเด่น */
   position: relative; 
   display: flex; 
   justify-content: center; 
   align-items: center; 
-  padding: 0; 
+  padding: 20px;
 }
 
 .image-wrapper { 
@@ -50,9 +67,12 @@ body {
   height: 100%; 
   position: relative; 
   overflow: hidden; 
+  border-radius: 20px;
   display: flex; 
   justify-content: center; 
   align-items: center; 
+  background: white;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.05);
 }
 
 .uploaded-image { 
@@ -63,43 +83,49 @@ body {
   transition: all 0.5s ease; 
 }
 
+/* ปุ่มเปลี่ยนรูปที่ซ้อนบนภาพ */
 .image-overlay { 
   position: absolute; 
-  bottom: 20px; 
-  right: 20px; 
+  bottom: 25px; 
   display: flex;
-  gap: 10px;
+  gap: 15px;
+  z-index: 10;
 }
 
 .overlay-btn {
-  background: rgba(0, 0, 0, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  color: white;
-  padding: 8px 15px;
-  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  color: var(--text-main);
+  padding: 10px 20px;
+  border-radius: 50px;
   font-size: 0.9rem; 
+  font-weight: 600;
   cursor: pointer;
-  backdrop-filter: blur(5px);
-  transition: all 0.3s;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 .overlay-btn:hover {
-  background: rgba(0, 0, 0, 0.8);
-  transform: scale(1.05);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  color: #00b09b;
 }
 
+/* Placeholder (ตอนยังไม่เลือกรูป) */
 .upload-placeholder { 
   text-align: center; 
-  color: #94a3b8; 
-  transition: transform 0.3s; 
   width: 100%;
 }
-
-.upload-placeholder h3 { font-size: 2rem; margin-bottom: 20px; color: #f1f5f9; }
+.upload-placeholder h3 { 
+  font-size: 1.8rem; 
+  margin-bottom: 30px; 
+  color: var(--text-main);
+  font-weight: 700;
+}
 
 .upload-options {
   display: flex;
   justify-content: center;
-  gap: 30px;
+  gap: 40px;
   margin-top: 10px;
 }
 
@@ -108,157 +134,189 @@ body {
   text-align: center;
   transition: transform 0.2s;
 }
-.option-card:hover {
-  transform: scale(1.1);
-}
+.option-card:hover { transform: scale(1.1); }
 
 .icon-circle { 
-  width: 90px; 
-  height: 90px; 
-  background: rgba(255, 255, 255, 0.1); 
-  border-radius: 50%; 
+  width: 80px; 
+  height: 80px; 
+  background: white; 
+  border-radius: 24px; /* ทรงสี่เหลี่ยมมนๆ */
   display: flex; 
   justify-content: center; 
   align-items: center; 
-  font-size: 3rem; 
-  margin: 0 auto 10px; 
-  backdrop-filter: blur(5px); 
-  border: 2px solid rgba(255,255,255,0.1);
+  font-size: 2.5rem; 
+  margin: 0 auto 15px; 
+  box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+  transition: all 0.3s ease;
+  color: #00b09b;
+}
+.option-card:hover .icon-circle {
+  background: var(--primary-gradient);
+  color: white;
+  box-shadow: 0 15px 30px rgba(0, 176, 155, 0.3);
 }
 
 .option-card p {
-  font-size: 1.1rem;
-  color: #cbd5e1;
-  margin-top: 5px;
+  font-size: 1rem;
+  color: var(--text-sub);
+  font-weight: 500;
 }
 
-/* Right Panel */
+/* --- Right Panel (ส่วนผลลัพธ์) --- */
 .right-panel { 
   flex: 1; 
-  padding: 40px; 
+  padding: 50px; 
   display: flex; 
   flex-direction: column; 
   justify-content: space-between; 
   background: white; 
-  box-shadow: -10px 0 30px rgba(0,0,0,0.1); 
   z-index: 10; 
 }
 
-.header-text h1 { font-size: 2.5rem; color: #0f172a; }
-.header-text p { font-size: 1.1rem; color: #94a3b8; }
-.result-area { flex-grow: 1; display: flex; justify-content: center; align-items: center; padding: 10px; }
-.empty-state p { font-size: 1.2rem; color: #cbd5e1; text-align: center; }
-.loading-state { text-align: center; color: #3b82f6; }
+.header-text h1 { 
+  font-size: 3rem; 
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 800;
+  margin-bottom: 5px;
+}
+.header-text p { font-size: 1.1rem; color: var(--text-sub); }
 
-/* Result Card */
+.result-area { 
+  flex-grow: 1; 
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  padding: 10px; 
+}
+.empty-state p { font-size: 1.2rem; color: #b2bec3; text-align: center; line-height: 1.6; }
+.loading-state { text-align: center; }
+.loading-state h2 { margin-top: 20px; color: var(--text-main); }
+
+/* Result Card (การ์ดผลลัพธ์) */
 .result-card { 
   width: 100%; 
-  background: #f8fafc; 
-  padding: 25px; 
-  border-radius: 20px; 
+  background: #ffffff; 
+  padding: 30px; 
+  border-radius: 25px; 
   text-align: center; 
-  border: 1px solid #e2e8f0; 
+  border: 1px solid #dfe6e9;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.03);
 }
 
 .prediction-badge { 
   display: inline-block; 
-  background: #2563eb; 
+  background: var(--primary-gradient); 
   color: white; 
-  padding: 8px 30px; 
+  padding: 10px 30px; 
   border-radius: 50px; 
-  font-size: 1.8rem; 
-  font-weight: bold; 
-  margin-bottom: 20px; 
-  box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3); 
+  font-size: 1.5rem; 
+  font-weight: 700; 
+  margin-bottom: 25px; 
+  box-shadow: 0 8px 20px rgba(0, 176, 155, 0.3); 
   text-transform: capitalize; 
+  letter-spacing: 1px;
 }
 
 .stat-row { 
   display: flex; 
   justify-content: space-between; 
-  margin-bottom: 12px; 
+  align-items: center;
+  margin-bottom: 15px; 
   font-size: 1.1rem; 
-  color: #334155; 
-  border-bottom: 1px solid #e2e8f0; 
-  padding-bottom: 8px; 
+  color: var(--text-main); 
+  border-bottom: 1px dashed #dfe6e9; 
+  padding-bottom: 10px; 
 }
 
 .bin-container { display: flex; align-items: center; gap: 10px; }
 .bin-color-dot { 
-  width: 20px; 
-  height: 20px; 
+  width: 18px; 
+  height: 18px; 
   border-radius: 50%; 
   display: inline-block; 
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2); 
-  border: 2px solid white; 
+  box-shadow: 0 0 0 4px rgba(0,0,0,0.05); 
 }
 
 .advice-box { 
-  margin-top: 20px; 
-  background: #eff6ff; 
-  padding: 15px; 
-  border-radius: 12px; 
+  margin-top: 25px; 
+  background: #f0fdf4; /* พื้นเขียวอ่อนๆ */
+  padding: 20px; 
+  border-radius: 15px; 
   text-align: left; 
-  border-left: 4px solid #2563eb; 
+  border-left: 5px solid #00b09b; 
 }
 
-.advice-box small { font-size: 0.9rem; color: #60a5fa; font-weight: bold; }
-.advice-box p { font-size: 1.1rem; color: #1e40af; margin-top: 5px; }
+.advice-box small { 
+  font-size: 0.85rem; 
+  color: #00b09b; 
+  font-weight: 700; 
+  text-transform: uppercase;
+}
+.advice-box p { font-size: 1.05rem; color: #2d3436; margin-top: 5px; line-height: 1.5; }
 
-/* Buttons */
-.action-buttons { display: flex; gap: 15px; height: 60px; }
+/* Buttons Style ใหม่ */
+.action-buttons { display: flex; gap: 15px; height: 60px; margin-top: 20px; }
+
 .btn-primary { 
   flex: 2; 
-  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); 
+  background: var(--primary-gradient); 
   color: white; 
   border: none; 
-  border-radius: 15px; 
+  border-radius: 16px; 
   font-size: 1.2rem; 
   font-weight: 600; 
   cursor: pointer; 
-  transition: all 0.2s; 
-  box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3); 
+  transition: all 0.3s; 
+  box-shadow: 0 10px 20px rgba(0, 176, 155, 0.2); 
 }
-.btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(37, 99, 235, 0.4); }
-.btn-primary:disabled { background: #94a3b8; cursor: not-allowed; transform: none; }
+.btn-primary:hover:not(:disabled) { 
+  transform: translateY(-3px); 
+  box-shadow: 0 15px 30px rgba(0, 176, 155, 0.4); 
+}
+.btn-primary:disabled { 
+  background: #b2bec3; 
+  cursor: not-allowed; 
+  box-shadow: none; 
+  transform: none;
+}
+
 .btn-secondary { 
   flex: 1; 
-  background: #fee2e2; 
-  color: #ef4444; 
+  background: #fff0f0; 
+  color: #d63031; 
   border: none; 
-  border-radius: 15px; 
+  border-radius: 16px; 
   font-size: 1rem; 
   font-weight: 600; 
   cursor: pointer; 
-  transition: background 0.2s; 
+  transition: all 0.2s; 
 }
-.btn-secondary:hover { background: #fecaca; }
+.btn-secondary:hover { background: #ffe6e6; }
 
+/* Spinner */
 .spinner { 
-  width: 40px; 
-  height: 40px; 
-  border: 4px solid #e2e8f0; 
-  border-top: 4px solid #3b82f6; 
+  width: 50px; 
+  height: 50px; 
+  border: 4px solid #f3f3f3; 
+  border-top: 4px solid #00b09b; 
   border-radius: 50%; 
   animation: spin 1s linear infinite; 
-  margin: 0 auto 10px; 
+  margin: 0 auto 15px; 
 }
 @keyframes spin { 100% { transform: rotate(360deg); } }
-.fade-in { animation: fadeIn 0.5s ease; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-.image-wrapper {
-  position: relative;
-  overflow: hidden;
-  border-radius: 12px;
+/* Fade In Animation */
+.fade-in { animation: fadeIn 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
+@keyframes fadeIn { 
+  from { opacity: 0; transform: translateY(20px); } 
+  to { opacity: 1; transform: translateY(0); } 
 }
 
-.uploaded-image {
-  width: 100%;
-  display: block;
-  transition: filter 0.3s ease;
-}
-
+/* =========================================================
+   🔥 ORIGINAL ANIMATION (ห้ามแก้ - ยกมาทั้งดุ้นตามสั่ง) 🔥
+========================================================= */
 .image-wrapper.scanning .uploaded-image {
   filter: blur(10px) brightness(0.7);
 }
@@ -278,25 +336,13 @@ body {
 }
 
 @keyframes fadeOut {
-  0% {
-    opacity: 0;
-    transform: scale(0.5);
-  }
-  30% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(0.3);
-  }
+  0% { opacity: 0; transform: scale(0.5); }
+  30% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.3); }
 }
+/* ========================================================= */
 
-
-
-/* =========================================
-   2. MOBILE PHONES (มือถือ)
-========================================= */
+/* Responsive (Mobile) */
 @media (max-width: 1024px) {
   body { 
     height: auto !important; 
@@ -305,63 +351,35 @@ body {
     padding: 20px 0;
     align-items: flex-start;
   }
-
   .glass-card { 
     flex-direction: column; 
     height: auto !important; 
-    min-height: 0 !important; 
-    width: 90vw; 
+    width: 92vw; 
     overflow: visible !important; 
     margin: 20px 0;
   }
-
   .left-panel { 
-    height: 350px; 
+    height: 380px; 
     flex: none; 
-    border-radius: 25px 25px 0 0;
+    border-radius: 30px 30px 0 0;
   }
-
   .right-panel { 
     height: auto !important; 
-    min-height: 0 !important;
-    padding: 20px; 
-    border-radius: 0 0 25px 25px;
+    padding: 30px 20px; 
+    border-radius: 0 0 30px 30px;
     flex: none;
     justify-content: flex-start !important; 
     gap: 20px; 
   }
-
-  .result-area {
-    margin: 10px 0; 
-    flex-grow: 0 !important; 
-  }
-  
-  .header-text h1 { font-size: 1.8rem; }
-  
-  .action-buttons {
-    flex-direction: column;
-    height: auto;
-    margin-top: 10px;
-  }
-
-  .btn-primary, .btn-secondary {
-    width: 100%;
-    padding: 12px;
-  }
-  
-  .upload-options { gap: 15px; }
-  .icon-circle { width: 70px; height: 70px; font-size: 2.5rem; }
+  .header-text h1 { font-size: 2.2rem; }
+  .action-buttons { flex-direction: column; height: auto; }
+  .btn-primary, .btn-secondary { width: 100%; padding: 15px; }
+  .upload-options { gap: 20px; }
+  .icon-circle { width: 60px; height: 60px; font-size: 2rem; border-radius: 18px; }
 }
 
-
-/* =========================================
-   3. TABLET LANDSCAPE (แท็บเล็ต แนวนอน) 
-   - แก้ปัญหาขอบไม่โค้ง -> เปลี่ยน overflow เป็น hidden
-   - แก้ปัญหาสแกนไม่เต็ม -> เอา padding ออกจาก left-panel
-========================================= */
+/* Tablet Landscape */
 @media (min-width: 1025px) and (max-width: 1366px) {
-  
-  /* ปลดล็อค Body ให้เลื่อนได้ */
   body { 
     height: auto !important; 
     min-height: 100vh; 
@@ -369,40 +387,16 @@ body {
     padding: 40px 20px;
     align-items: flex-start; 
   }
-
-  /* ปรับการ์ด */
   .glass-card { 
     width: 95vw; 
     height: auto !important; 
     min-height: 600px;
-    /* แก้ไข: เปลี่ยน visible เป็น hidden เพื่อให้ขอบโค้ง */
     overflow: hidden !important; 
     margin-bottom: 20px;
   }
-
-  /* ข้างในให้ยืดหยุ่น */
-  .left-panel, .right-panel {
-    height: auto !important; 
-    min-height: 600px; 
-  }
-
-  /* แก้ไข: เอา padding ออก เพื่อให้รูปเต็มพื้นที่ */
-  .left-panel {
-    padding: 0 !important;
-  }
-
-  /* แก้ไข: ส่วนขวายังคงต้องการ padding */
-  .right-panel {
-    padding: 30px !important;
-  }
-
-  /* ปรับรูปให้พอดี */
-  .uploaded-image {
-    max-height: 500px;
-  }
-
-  /* เผื่อที่ให้ปุ่มด้านล่าง */
-  .action-buttons {
-    margin-top: 20px;
-  }
+  .left-panel, .right-panel { height: auto !important; min-height: 600px; }
+  .left-panel { padding: 0 !important; }
+  .right-panel { padding: 30px !important; }
+  .uploaded-image { max-height: 500px; }
+  .action-buttons { margin-top: 20px; }
 }
