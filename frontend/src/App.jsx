@@ -9,6 +9,10 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [dots, setDots] = useState([]);
   const wrapperRef = useRef(null);
+  
+  // State สำหรับ Popup
+  const [showCredits, setShowCredits] = useState(false);
+  const [showGuide, setShowGuide] = useState(false);
 
   useEffect(() => {
     if (!loading) {
@@ -35,7 +39,7 @@ function App() {
           setDots(prev => prev.filter(d => d.id !== dot.id));
         }, dot.duration);
       });
-    }, 16); 
+    }, 16);
 
     return () => clearInterval(interval);
   }, [loading]);
@@ -74,7 +78,6 @@ function App() {
         axios.post("https://riost123-trash-api-backend.hf.space/predict", formData),
         new Promise(resolve => setTimeout(resolve, 2500))
       ]);
-
       console.log("Response:", apiResponse.data);
       if (apiResponse.data.error) {
         alert("Server Error: " + apiResponse.data.error);
@@ -150,7 +153,7 @@ function App() {
                   <p>ถ่ายรูป</p>
                 </div>
               </div>
-              <p style={{marginTop: '30px', fontSize: '0.9rem', opacity: 0.7}}>คลิกเพื่อเริ่มใช้งาน</p>
+              <p style={{marginTop: '20px', fontSize: '0.9rem'}}>คลิกเพื่อเริ่มใช้งาน</p>
             </div>
           )}
           <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" style={{ display: "none" }} />
@@ -159,16 +162,26 @@ function App() {
 
         {/* --- Right Panel --- */}
         <div className="right-panel">
-          <div className="header-text">
-            <h1>Trash AI ♻️</h1>
-            <p>ระบบแยกขยะอัจฉริยะเพื่อโลกสีเขียว</p>
+          <div className="header-row">
+            <div className="header-text">
+              <h1>Trash AI ♻️</h1>
+              <p>ระบบแยกขยะอัจฉริยะ</p>
+            </div>
+            <div className="top-icons">
+               <button className="icon-btn guide-btn" onClick={() => setShowGuide(true)} title="คู่มือการแยกขยะ">
+                 📖
+               </button>
+               <button className="icon-btn info-btn" onClick={() => setShowCredits(true)} title="ผู้จัดทำ">
+                 ℹ️
+               </button>
+            </div>
           </div>
 
           <div className="result-area">
             {loading ? (
               <div className="loading-state">
                 <div className="spinner"></div> 
-                <h2>กำลังประมวลผล...</h2>
+                <h2>กำลังวิเคราะห์...</h2>
               </div>
             ) : result ? (
               <div className="result-card fade-in">
@@ -187,14 +200,14 @@ function App() {
                   </div>
                 </div>
                 <div className="advice-box">
-                  <small>คำแนะนำจาก AI:</small>
+                  <small>คำแนะนำ:</small>
                   <p>{result.advice}</p>
                 </div>
               </div>
             ) : (
               <div className="empty-state">
-                <p> เลือกรูปภาพ</p>
-                <p>เพื่อเริ่มการวิเคราะห์ขยะ</p>
+                <p> เลือกวิธีอัปโหลด </p>
+                <p>เพื่อเริ่มใช้งาน</p>
               </div>
             )}
           </div>
@@ -205,7 +218,7 @@ function App() {
               onClick={handleUpload}
               disabled={loading || !file}
             >
-              {loading ? "กำลังสแกน..." : "🔍 เริ่มทำนายผล"}
+              {loading ? "กำลังสแกน..." : "🔍 ทำนายผล"}
             </button>
             
             {preview && !loading && (
@@ -216,6 +229,67 @@ function App() {
           </div>
         </div>
       </div>
+
+      {/* Modal: Credits */}
+      {showCredits && (
+        <div className="modal-overlay" onClick={() => setShowCredits(false)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>👨‍💻 คณะผู้จัดทำ</h3>
+              <button className="close-btn" onClick={() => setShowCredits(false)}>×</button>
+            </div>
+            <ul className="member-list">
+              <li>
+                <span className="id">67100511</span>
+                <span className="name">ทรัพย์กีร์ อาบู</span>
+              </li>
+              <li>
+                <span className="id">67115873</span>
+                <span className="name">อนุสรณ์ สมาน</span>
+              </li>
+              <li>
+                <span className="id">67129007</span>
+                <span className="name">สิรวิชญ์ เพชรจำรัส</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Guide */}
+      {showGuide && (
+        <div className="modal-overlay" onClick={() => setShowGuide(false)}>
+          <div className="modal-content guide-modal" onClick={e => e.stopPropagation()}>
+             <div className="modal-header">
+              <h3>📖 คู่มือการแยกขยะ</h3>
+              <button className="close-btn" onClick={() => setShowGuide(false)}>×</button>
+            </div>
+            <div className="guide-grid">
+              <div className="guide-item yellow">
+                <span className="guide-icon">🟡</span>
+                <h4>ถังเหลือง (รีไซเคิล)</h4>
+                <p>ขวดพลาสติก, แก้ว, กระดาษ, โลหะ (ล้างก่อนทิ้ง)</p>
+              </div>
+              <div className="guide-item green">
+                <span className="guide-icon">🟢</span>
+                <h4>ถังเขียว (ขยะเปียก)</h4>
+                <p>เศษอาหาร, เปลือกผลไม้, ใบไม้ (ย่อยสลายได้)</p>
+              </div>
+              <div className="guide-item red">
+                <span className="guide-icon">🔴</span>
+                <h4>ถังแดง (อันตราย)</h4>
+                <p>ถ่านไฟฉาย, หลอดไฟ, กระป๋องสเปรย์, ยาหมดอายุ</p>
+              </div>
+              <div className="guide-item blue">
+                <span className="guide-icon">🔵</span>
+                <h4>ถังน้ำเงิน (ทั่วไป)</h4>
+                <p>ถุงพลาสติกเปื้อน, โฟม, ทิชชู่ (รีไซเคิลไม่ได้)</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
