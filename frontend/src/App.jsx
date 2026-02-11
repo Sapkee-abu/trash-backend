@@ -254,6 +254,10 @@ function App() {
                 <span className="id">67129007</span>
                 <span className="name">สิรวิชญ์ เพชรจำรัส</span>
               </li>
+              <li>
+                <span className="id">67116228 </span>
+                <span className="name">ชนินทร เพ็งจิตร</span>
+              </li>
             </ul>
           </div>
         </div>
