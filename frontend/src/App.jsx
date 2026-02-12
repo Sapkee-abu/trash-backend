@@ -23,14 +23,14 @@ function App() {
     const interval = setInterval(() => {
       const wrapperWidth = wrapperRef.current?.offsetWidth || 1000;
       const batch = [];
-      for (let i = 0; i < 25; i++) {
+      for (let i = 0; i < 15; i++) { // ลดจำนวนจุดลงนิดนึงเพื่อความลื่น
         const size = wrapperWidth * 0.0008 + Math.random() * wrapperWidth * 0.0008;
         batch.push({
           id: Math.random(),
           top: Math.random() * 100,
           left: Math.random() * 100,
           size,
-          duration: 2000 + Math.random() * 2000
+          duration: 1200 + Math.random() * 1600
         });
       }
       setDots(prev => [...prev, ...batch]);
@@ -39,7 +39,7 @@ function App() {
           setDots(prev => prev.filter(d => d.id !== dot.id));
         }, dot.duration);
       });
-    }, 16);
+    }, 1);
 
     return () => clearInterval(interval);
   }, [loading]);
@@ -74,11 +74,14 @@ function App() {
     formData.append("file", file);
 
     try {
+      // ใช้ URL Backend เดิมของคุณ
       const [apiResponse] = await Promise.all([
         axios.post("https://riost123-trash-api-backend.hf.space/predict", formData),
-        new Promise(resolve => setTimeout(resolve, 2500))
+        new Promise(resolve => setTimeout(resolve, 2000)) // หน่วงเวลาเล็กน้อยให้เห็น Animation
       ]);
+      
       console.log("Response:", apiResponse.data);
+      
       if (apiResponse.data.error) {
         alert("Server Error: " + apiResponse.data.error);
       } else {
@@ -86,7 +89,7 @@ function App() {
       }
     } catch (error) {
       console.error(error);
-      alert("เชื่อมต่อ Server ไม่สำเร็จ (เช็ค Backend หรือเน็ต)");
+      alert("เชื่อมต่อ Server ไม่สำเร็จ (กรุณาเช็คอินเทอร์เน็ต)");
     } finally {
       setLoading(false);
     }
@@ -153,7 +156,7 @@ function App() {
                   <p>ถ่ายรูป</p>
                 </div>
               </div>
-              <p style={{marginTop: '20px', fontSize: '0.9rem'}}>คลิกเพื่อเริ่มใช้งาน</p>
+              <p style={{marginTop: '20px', fontSize: '0.9rem', color: '#636e72'}}>คลิกเพื่อเริ่มใช้งาน</p>
             </div>
           )}
           <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" style={{ display: "none" }} />
@@ -164,11 +167,16 @@ function App() {
         <div className="right-panel">
           <div className="header-row">
             <div className="header-text">
-              <h1>Trash AI ♻️</h1>
+              {/* ✅ โลโก้แบบ Emoji + ชื่อไล่สี */}
+              <h1>
+                <span className="brand-name">Trash AI</span> 
+                <span className="app-logo">♻️</span> 
+              </h1>
               <p>ระบบแยกขยะอัจฉริยะ</p>
             </div>
+            
             <div className="top-icons">
-               <button className="icon-btn guide-btn" onClick={() => setShowGuide(true)} title="คู่มือการแยกขยะ ">
+               <button className="icon-btn guide-btn" onClick={() => setShowGuide(true)} title="คู่มือการแยกขยะ">
                  📖
                </button>
                <button className="icon-btn info-btn" onClick={() => setShowCredits(true)} title="ผู้จัดทำ">
@@ -182,6 +190,7 @@ function App() {
               <div className="loading-state">
                 <div className="spinner"></div> 
                 <h2>กำลังวิเคราะห์...</h2>
+                <p>AI กำลังตรวจสอบขยะของคุณ</p>
               </div>
             ) : result ? (
               <div className="result-card fade-in">
@@ -203,11 +212,10 @@ function App() {
                   <small>คำแนะนำ:</small>
                   <p>{result.advice}</p>
                 </div>
-                
               </div>
             ) : (
               <div className="empty-state">
-                <p> เลือกวิธีอัปโหลด </p>
+                <p>เลือกวิธีอัปโหลด</p>
                 <p>เพื่อเริ่มใช้งาน</p>
               </div>
             )}
@@ -241,26 +249,11 @@ function App() {
               <button className="close-btn" onClick={() => setShowCredits(false)}>×</button>
             </div>
             <ul className="member-list">
-              <li>
-                <span className="id">67100511</span>
-                <span className="name">ทรัพย์กีร์ อาบู</span>
-              </li>
-              <li>
-                <span className="id">67115873</span>
-                <span className="name">อนุสรณ์ สมาน</span>
-              </li>
-              <li>
-                <span className="id">67129007</span>
-                <span className="name">สิรวิชญ์ เพชรจำรัส</span>
-              </li>
-               <li>
-                <span className="id">67117358</span>
-                <span className="name">ซาฟารีฟ ตาหา</span>
-              </li>
-              <li>
-                <span className="id">67116228</span>
-                <span className="name">ชนินทร เพ็งจิตร</span>
-              </li>
+              <li><span className="id">67100511</span> <span className="name">ทรัพย์กีร์ อาบู</span></li>
+              <li><span className="id">67115873</span> <span className="name">อนุสรณ์ สมาน</span></li>
+              <li><span className="id">67129007</span> <span className="name">สิรวิชญ์ เพชรจำรัส</span></li>
+               <li><span className="id">67117358</span> <span className="name">ซาฟารีฟ ตาหา</span></li>
+              <li><span className="id">67116228</span> <span className="name">ชนินทร เพ็งจิตร</span></li>
             </ul>
           </div>
         </div>
@@ -278,6 +271,7 @@ function App() {
               <div className="guide-item yellow">
                 <span className="guide-icon">🟡</span>
                 <h4>ถังเหลือง (รีไซเคิล)</h4>
+                {/* ✅ ข้อความจะเป็นสีดำแล้ว */}
                 <p>ขวดพลาสติก, แก้ว, กระดาษ, โลหะ (ล้างก่อนทิ้ง)</p>
               </div>
               <div className="guide-item green">
